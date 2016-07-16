@@ -1,0 +1,111 @@
+HDFS Hands-on
+-------------------------------------------------------------------------------
+Ref: https://hadoop.apache.org/docs/r2.7.1/hadoop-project-dist/hadoop-common/FileSystemShell.html
+
+a. Create a folder called /user/training/stock/input in hdfs
+
+b. Copy stock ticket file NYSE_daily.txt to /user/training/stock/input 
+
+c. list the file in HDFS using command line
+
+d. display the content of file in hdfs using cat command
+
+e. Browse the file in HDFS using Web UI  (localhost:50070)
+
+f. Modify the replication factor of NYSE_daily.txt to 2
+
+g. delete the stock directory in hdfs along with all sub directories
+
+
+MapReduce Hands-on
+--------------------------------------------------------------------------------
+NYSE_daily.txt has the following columns
+
+Exchange, Ticker, Date, Open, High, Low, Close, Volume, Adjusted Close
+
+1] Write a map reduce program to split the NYSE_daily.txt into 4 files based on Ticker
+   Hint: Use key = Ticker, value = rest of record in Map task
+
+2] Write a Map Reduce Program to find the maximum Variation for each stock ticker
+
+Input Files: NYSE_daily_splits  (4 files)
+
+The data file has following columns. 
+Exchange, Ticker, Date, Open, High, Low, Close, Volume, Adjusted Close
+
+Variation = High - Low
+
+Output Required:
+--------------------
+Ticker, Date, Max Variation
+
+a. Monitor the job in Job tracker (localhost:50030)
+
+b. Verify that 4 mappers are executed and 1 reducer is executed
+
+c. Modify the program to use 2 reducers
+
+d. Verify that 2 reducers are executed
+
+e. Verify that 2 output files are created (one for each reducer)
+
+f. Set the number of reducers to zero and verify that no reducers are executed.
+   Also verify that only the mapper code is executed and 4 mapper output files are generated.
+
+
+Hive Hands-on
+----------------------------------------------------------------------------------
+
+a. Create database NYSE in hive
+
+b. Create a table called nyse_data file with following colummns
+   Exchange string
+   Ticker   string
+   Date     Date
+   Open     Decimal (10,2)
+   High     Decimal (10,2)        
+   Low      Decimal (10,2)
+   Close    Decimal (10,2)
+   Volume   Int
+   AdjClose Decimal (10,2)
+
+c. Load data from NYSE_daily.txt into table
+
+d. Create a table called nyse_by_month partitioned by year, month having following columns
+   Ticker   string
+   Date     Date
+   Open     Decimal (10,2)
+   High     Decimal (10,2)        
+   Low      Decimal (10,2)
+   Close    Decimal (10,2)
+   Volume   Int
+   AdjClose Decimal (10,2)
+
+e. Load data from NYSE_daily into nyse_by_month table
+
+f. Write a hive sql query to find Minimum and Maximum AdjClose for each stock ticker in each month
+
+
+Pig Hands-on
+----------------------------------------------------------------------------------
+
+1] Create a pig script to do the following:
+
+   a. Load the NYSE_daily.txt file
+   b. Group records by Ticker, Month
+   c. Find Minimum and Maximum AdjClose for each stock ticker in each month
+   d. save the output to /user/training/stock/MinMax
+
+2] Create a pig script to do the following:
+   a. Load the NYSE_daily.txt file
+   b. Find the average volume for each month
+   c. Extract the following columns
+      Ticker, Month, AvgVolume
+   d. Save the output to /user/training/stock/AvgVolume
+
+3] Create a pig script to do the following:
+   a. Load NYSE_daily.txt file
+   b. Load AvgVolume data
+   c. Filter out records from NYSE_daily.txt where Volume >= AvgVolume
+   d. Save the records for the above condition to /user/training/stock/HighVolume
+
